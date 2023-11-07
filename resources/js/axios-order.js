@@ -5,7 +5,7 @@ const axiosIns = axios.create({
   // ================================
   // baseURL: 'http://127.0.0.1:8000/',
   baseURL: `${import.meta.env.VITE_PUSHER_API_URL}/api`,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'multipart/form-data' }
   // timeout: 1000,
   // headers: {'X-Custom-Header': 'foobar'}
 })

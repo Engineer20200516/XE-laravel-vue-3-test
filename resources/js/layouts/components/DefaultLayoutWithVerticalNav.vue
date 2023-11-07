@@ -1,21 +1,23 @@
 <script setup>
-import { useTheme } from 'vuetify'
-import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
-import upgradeBannerDark from '@images/pro/upgrade-banner-dark.png'
-import upgradeBannerLight from '@images/pro/upgrade-banner-light.png'
-import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
+import VerticalNavSectionTitle from "@/@layouts/components/VerticalNavSectionTitle.vue";
+import upgradeBannerDark from "@images/pro/upgrade-banner-dark.png";
+import upgradeBannerLight from "@images/pro/upgrade-banner-light.png";
+import VerticalNavLayout from "@layouts/components/VerticalNavLayout.vue";
+import VerticalNavLink from "@layouts/components/VerticalNavLink.vue";
+import { useTheme } from "vuetify";
 
 // Components
-import Footer from '@/layouts/components/Footer.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
+import Footer from "@/layouts/components/Footer.vue";
+import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
+import UserProfile from "@/layouts/components/UserProfile.vue";
 
-const vuetifyTheme = useTheme()
+const vuetifyTheme = useTheme();
 
 const upgradeBanner = computed(() => {
-  return vuetifyTheme.global.name.value === 'light' ? upgradeBannerLight : upgradeBannerDark
-})
+  return vuetifyTheme.global.name.value === "light"
+    ? upgradeBannerLight
+    : upgradeBannerDark;
+});
 </script>
 
 <template>
@@ -34,7 +36,7 @@ const upgradeBanner = computed(() => {
         <!-- 👉 Search -->
         <div
           class="d-flex align-center cursor-pointer"
-          style="user-select: none;"
+          style="user-select: none"
         >
           <!-- 👉 Search Trigger button -->
           <IconBtn>
@@ -148,6 +150,13 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
+          title: 'Companies',
+          icon: 'bx-table',
+          to: '/companies',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
           title: 'Form Layouts',
           icon: 'mdi-form-select',
           to: '/form-layouts',
@@ -161,15 +170,15 @@ const upgradeBanner = computed(() => {
         href="https://themeselection.com/item/sneat-vuetify-vuejs-laravel-admin-template"
         target="_blank"
         rel="noopener noreferrer"
-        style="margin-left: 7px;"
+        style="margin-left: 7px"
       >
         <img
           :src="upgradeBanner"
           alt="upgrade-banner"
           transition="scale-transition"
           class="upgrade-banner mx-auto"
-          style="max-width: 230px;"
-        >
+          style="max-width: 230px"
+        />
       </a>
     </template>
 
