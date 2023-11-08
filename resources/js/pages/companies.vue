@@ -1,5 +1,4 @@
 <script setup>
-import Companies from "@/views/pages/companies/Companies.vue";
 import { onMounted, ref, watch } from "vue";
 import axios from "../axios-order";
 
@@ -19,11 +18,7 @@ const fetchCompanies = (newPage = page) => {
   axios
     .get(`/companies?page=${newPage}`)
     .then((response) => {
-      companies.value = response.data.data.map((company, _i) => {
-        company.logo_url = `/storage/${company.logo}`;
-
-        return company;
-      });
+      companies.value = response.data.data;
       page.value = response.data.current_page;
       pageCount.value = Math.ceil(response.data.total / response.data.per_page);
     })
@@ -135,7 +130,7 @@ const websiteRules = [
 <template>
   <VRow>
     <VCol cols="12">
-      <VCard title="Basic">
+      <VCard title="Companies">
         <VTable>
           <thead>
             <tr>
@@ -151,7 +146,7 @@ const websiteRules = [
               <td>{{ company.name }}</td>
               <td>{{ company.email }}</td>
               <td>
-                <v-avatar :image="company.logo_url"> </v-avatar>
+                <v-avatar :image="`/storage/${company.logo}`"> </v-avatar>
               </td>
               <td>{{ company.website }}</td>
               <td>
@@ -226,9 +221,6 @@ const websiteRules = [
 
 <script>
 export default {
-  components: {
-    Companies,
-  },
   setup() {
     return {
       companies,

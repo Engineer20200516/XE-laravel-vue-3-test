@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,5 +32,5 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::resource('companies', CompanyController::class);
-Route::resource('api/employees', 'App\Http\Controllers\EmployeeController');
+Route::resource('employees', EmployeeController::class);
 

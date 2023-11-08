@@ -12,7 +12,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employees = Employee::with('company')->paginate(10);
+        return response()->json($employees);
     }
 
     /**
@@ -28,7 +29,17 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'company_id' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+        ]);
+
+        $employee = Employee::create($validatedData);
+
+        return response()->json(['message' => 'Employee created successfully', 'data' => $employee], 201);
     }
 
     /**
@@ -52,7 +63,17 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-        //
+        $validatedData = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'company_id' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+        ]);
+
+        $employee->update($validatedData);
+
+        return response()->json(['message' => 'Employee updated successfully', 'data' => $employee], 200);
     }
 
     /**
@@ -60,6 +81,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        $employee->delete();
+
+        return response()->json(['message' => 'Employee deleted successfully'], 200);
     }
 }
