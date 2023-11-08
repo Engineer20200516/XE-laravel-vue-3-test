@@ -36,7 +36,9 @@ const register = ({ username, email, password }) => {
           </div>
         </template>
 
-        <VCardTitle class="text-2xl font-weight-bold"> sneat </VCardTitle>
+        <VCardTitle class="text-2xl font-weight-bold">
+          laravel-vue-test
+        </VCardTitle>
       </VCardItem>
 
       <VCardText>
