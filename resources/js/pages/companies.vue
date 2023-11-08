@@ -1,6 +1,6 @@
 <script setup>
+import companyService from "@/services/company.service";
 import { onMounted, ref, watch } from "vue";
-import axios from "../axios-order";
 
 const companies = ref([]);
 const showEditModal = ref(false);
@@ -15,15 +15,15 @@ watch(page, (newPage, oldPage) => {
 });
 
 const fetchCompanies = (newPage = page) => {
-  axios
-    .get(`/companies?page=${newPage}`)
-    .then((response) => {
-      companies.value = response.data.data;
-      page.value = response.data.current_page;
-      pageCount.value = Math.ceil(response.data.total / response.data.per_page);
+  companyService
+    .getCompanies({ pageNumber: newPage })
+    .then((data) => {
+      companies.value = data.data;
+      page.value = data.current_page;
+      pageCount.value = Math.ceil(data.total / data.per_page);
     })
-    .catch((error) => {
-      console.error(error);
+    .catch((err) => {
+      console.error(err);
     });
 };
 
@@ -56,13 +56,14 @@ const saveEditedCompany = () => {
         formData.append("logo", selectedCompany.value.logo[0]);
       }
       formData.append("website", selectedCompany.value.website);
-      axios
-        .post("/companies", formData)
-        .then((response) => {
+
+      companyService
+        .addCompany(formData)
+        .then((res) => {
           fetchCompanies();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((err) => {
+          console.error(err);
         });
     } else {
       //When save edited company
@@ -74,30 +75,29 @@ const saveEditedCompany = () => {
         formData.append("logo", selectedCompany.value.logo[0]);
       }
       formData.append("website", selectedCompany.value.website);
-      axios
-        .post(`/companies/${selectedCompany.value.id}?_method=PUT`, formData)
-        .then((response) => {
+
+      companyService
+        .updateCompany(selectedCompany.value.id, formData)
+        .then((res) => {
           fetchCompanies();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((err) => {
+          console.error(err);
         });
     }
 
     showEditModal.value = false;
-
-    console.log(selectedCompany.value);
   }
 };
 
 const removeCompany = (companyId) => {
-  axios
-    .delete(`/companies/${selectedCompany.value.id}`)
-    .then((response) => {
+  companyService
+    .removeCompany(selectedCompany.value.id)
+    .then((res) => {
       fetchCompanies();
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      console.error(err);
     });
 };
 
@@ -115,16 +115,9 @@ const nameRules = [
   (v) => !!v || "Name is required",
   (v) => v.length <= 50 || "Name must be less than 50 characters",
 ];
-const emailRules = [
-  (v) => !!v || "Email is required",
-  (v) => /.+@.+\..+/.test(v) || "Email must be valid",
-];
+const emailRules = [];
 const logoRules = [];
-const websiteRules = [
-  (v) => !!v || "Website is required",
-  (v) =>
-    /^https?:\/\/.+/.test(v) || "Website must start with http:// or https://",
-];
+const websiteRules = [];
 </script>
 
 <template>

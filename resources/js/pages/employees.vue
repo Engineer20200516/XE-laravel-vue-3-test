@@ -1,6 +1,7 @@
 <script setup>
+import companyService from "@/services/company.service";
+import employeeService from "@/services/employee.service";
 import { onMounted, ref, watch } from "vue";
-import axios from "../axios-order";
 
 const companies = ref([]);
 const employees = ref([]);
@@ -16,31 +17,22 @@ watch(page, (newPage, oldPage) => {
 });
 
 const fetchEmployees = (newPage = page) => {
-  axios
-    .get(`/employees?page=${newPage}`)
-    .then((response) => {
-      employees.value = response.data.data.map((employee, _i) => {
-        employee.logo_url = `/storage/${employee.logo}`;
-
-        return employee;
-      });
-      page.value = response.data.current_page;
-      pageCount.value = Math.ceil(response.data.total / response.data.per_page);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  employeeService.getEmployees({ pageNumber: newPage }).then((data) => {
+    employees.value = data.data;
+    page.value = data.current_page;
+    pageCount.value = Math.ceil(data.total / data.per_page);
+  });
 };
 
-const fetchCompanies = () => {
-  axios.get(`/companies`).then((response) => {
-    companies.value = response.data.data;
+const fetchAllCompanies = () => {
+  companyService.getAll().then((data) => {
+    companies.value = data;
   });
 };
 
 onMounted(() => {
   fetchEmployees();
-  fetchCompanies();
+  fetchAllCompanies();
 });
 
 const openEditModal = (employee) => {
@@ -69,13 +61,14 @@ const saveEditedEmployee = () => {
         formData.append("company_id", selectedEmployee.value.company_id);
       }
       formData.append("phone", selectedEmployee.value.phone);
-      axios
-        .post("/employees", formData)
-        .then((response) => {
+
+      employeeService
+        .addEmployee(formData)
+        .then((res) => {
           fetchEmployees();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((err) => {
+          console.error(err);
         });
     } else {
       //When save edited employee
@@ -89,30 +82,28 @@ const saveEditedEmployee = () => {
       }
       formData.append("phone", selectedEmployee.value.phone);
 
-      axios
-        .post(`/employees/${selectedEmployee.value.id}?_method=PUT`, formData)
-        .then((response) => {
+      employeeService
+        .updateEmployee(selectedEmployee.value.id, formData)
+        .then((res) => {
           fetchEmployees();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((err) => {
+          console.error(err);
         });
     }
 
     showEditModal.value = false;
-
-    console.log(selectedEmployee.value);
   }
 };
 
 const removeEmployee = (employeeId) => {
-  axios
-    .delete(`/employees/${selectedEmployee.value.id}`)
-    .then((response) => {
+  employeeService
+    .removeEmployee(selectedEmployee.value.id)
+    .then((res) => {
       fetchEmployees();
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      console.error(err);
     });
 };
 
@@ -130,14 +121,8 @@ const nameRules = [
   (v) => !!v || "Name is required",
   (v) => v.length <= 50 || "Name must be less than 50 characters",
 ];
-const emailRules = [
-  (v) => !!v || "Email is required",
-  (v) => /.+@.+\..+/.test(v) || "Email must be valid",
-];
-const phoneRules = [
-  (v) => !!v || "Phone number is required",
-  (v) => /^\d{10}$/.test(v) || "Phone number must be 10 digits",
-];
+const emailRules = [];
+const phoneRules = [];
 </script>
 
 <template>

@@ -7,9 +7,6 @@ class UserService {
   getCurrentUser() {
     return axios.get(`${API_URL}/user`, { headers: authHeader() });
   }
-  getPublicContent() {
-    return axios.get(API_URL + "all;");
-  }
 }
 
 export default new UserService();

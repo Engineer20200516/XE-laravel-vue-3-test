@@ -36,6 +36,7 @@ Route::group(
         'middleware' => 'auth:sanctum'
     ],
     function () {
+        Route::get('companies/all', [CompanyController::class, 'all']);
         Route::resource('companies', CompanyController::class);
         Route::resource('employees', EmployeeController::class);
     }

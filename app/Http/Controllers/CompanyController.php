@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotificationEmail;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Mail;
 use Validator;
 
 class CompanyController extends Controller
@@ -16,6 +19,12 @@ class CompanyController extends Controller
         //
         // $companies = Company::all(); // Retrieve all companies
         $companies = Company::paginate(10);
+        return response()->json($companies);
+    }
+
+    public function all()
+    {
+        $companies = Company::all();
         return response()->json($companies);
     }
 
@@ -34,7 +43,6 @@ class CompanyController extends Controller
     {
         //
         // Validate the incoming request data
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -56,8 +64,19 @@ class CompanyController extends Controller
             'website' => $request->input('website'),
         ]);
 
-        return response()->json(['message' => 'Company created successfully', 'company' => $company], 201);
+        $content = [
+            'subject' => 'New company has arrived',
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+        ];
 
+        $users = User::all();
+
+        foreach ($users as $user) {
+            Mail::to($user->email)->send(new NotificationEmail($content));
+        }
+
+        return response()->json(['message' => 'Company created successfully', 'company' => $company], 201);
     }
 
     /**
