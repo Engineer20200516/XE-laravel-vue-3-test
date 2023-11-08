@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateCompanyRequest;
 use App\Mail\NotificationEmail;
 use App\Models\Company;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Mail;
-use Validator;
 
 class CompanyController extends Controller
 {
@@ -39,19 +38,11 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateCompanyRequest $request)
     {
         // Validate the incoming request data
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => '',
-            'logo' => 'image|max:2048',
-            'website' => '',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        $data = $request->validated();
 
         // Handle the storage of the newly created company
 
@@ -101,18 +92,9 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Company $company)
+    public function update(CreateCompanyRequest $request, Company $company)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => '',
-            'logo' => '',
-            'website' => '',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        $data = $request->validated();
 
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('logos', 'public');
