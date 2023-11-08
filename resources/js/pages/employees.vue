@@ -11,23 +11,41 @@ const selectedEmployee = ref(null);
 const page = ref(1);
 const pageCount = ref(0);
 const valid = ref(false);
+const loading = ref(false);
 
 watch(page, (newPage, oldPage) => {
   fetchEmployees(newPage);
 });
 
-const fetchEmployees = (newPage = page) => {
-  employeeService.getEmployees({ pageNumber: newPage }).then((data) => {
-    employees.value = data.data;
-    page.value = data.current_page;
-    pageCount.value = Math.ceil(data.total / data.per_page);
-  });
+const fetchEmployees = (newPage = page.value) => {
+  loading.value = true;
+  employeeService
+    .getEmployees({ pageNumber: newPage })
+    .then((data) => {
+      employees.value = data.data;
+      page.value = data.current_page;
+      pageCount.value = Math.ceil(data.total / data.per_page);
+      loading.value = false;
+    })
+    .catch((err) => {
+      console.error(err);
+      loading.value = false;
+    });
 };
 
 const fetchAllCompanies = () => {
-  companyService.getAll().then((data) => {
-    companies.value = data;
-  });
+  loading.value = true;
+
+  companyService
+    .getAll()
+    .then((data) => {
+      companies.value = data;
+      loading.value = false;
+    })
+    .catch((err) => {
+      console.error(err);
+      loading.value = false;
+    });
 };
 
 onMounted(() => {
@@ -61,14 +79,17 @@ const saveEditedEmployee = () => {
         formData.append("company_id", selectedEmployee.value.company_id);
       }
       formData.append("phone", selectedEmployee.value.phone);
+      loading.value = true;
 
       employeeService
         .addEmployee(formData)
         .then((res) => {
           fetchEmployees();
+          loading.value = false;
         })
         .catch((err) => {
           console.error(err);
+          loading.value = false;
         });
     } else {
       //When save edited employee
@@ -81,14 +102,17 @@ const saveEditedEmployee = () => {
         formData.append("company_id", selectedEmployee.value.company_id);
       }
       formData.append("phone", selectedEmployee.value.phone);
+      loading.value = true;
 
       employeeService
         .updateEmployee(selectedEmployee.value.id, formData)
         .then((res) => {
           fetchEmployees();
+          loading.value = false;
         })
         .catch((err) => {
           console.error(err);
+          loading.value = false;
         });
     }
 
@@ -97,12 +121,16 @@ const saveEditedEmployee = () => {
 };
 
 const removeEmployee = (employeeId) => {
+  loading.value = true;
+
   employeeService
-    .removeEmployee(selectedEmployee.value.id)
+    .removeEmployee(employeeId)
     .then((res) => {
+      loading.value = false;
       fetchEmployees();
     })
     .catch((err) => {
+      loading.value = false;
       console.error(err);
     });
 };
@@ -123,6 +151,7 @@ const nameRules = [
 ];
 const emailRules = [];
 const phoneRules = [];
+const companyRules = [(v) => !!v || "Company is required"];
 </script>
 
 <template>
@@ -203,6 +232,7 @@ const phoneRules = [];
             item-title="name"
             item-value="id"
             :items="companies"
+            :rules="companyRules"
             label="Company"
           ></v-select>
           <v-text-field
@@ -225,6 +255,15 @@ const phoneRules = [];
         </v-card-actions>
       </v-form>
     </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="loading" width="auto" persistent>
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="purple"
+      indeterminate
+    ></v-progress-circular>
   </v-dialog>
 </template>
 

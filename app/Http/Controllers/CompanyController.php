@@ -41,13 +41,12 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email',
-            'logo' => 'required|image|max:2048',
-            'website' => 'required|url',
+            'email' => '',
+            'logo' => 'image|max:2048',
+            'website' => '',
         ]);
 
         if ($validator->fails()) {
@@ -55,7 +54,11 @@ class CompanyController extends Controller
         }
 
         // Handle the storage of the newly created company
-        $logoPath = $request->file('logo')->store('logos', 'public');
+
+        $logoPath = '';
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public');
+        }
 
         $company = Company::create([
             'name' => $request->input('name'),
@@ -102,9 +105,9 @@ class CompanyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email',
-            'logo' => 'image|max:2048',
-            'website' => 'required|url',
+            'email' => '',
+            'logo' => '',
+            'website' => '',
         ]);
 
         if ($validator->fails()) {

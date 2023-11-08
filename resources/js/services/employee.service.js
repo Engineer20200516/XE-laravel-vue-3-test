@@ -30,10 +30,10 @@ class EmployeeService {
     });
   }
 
-  updateEmployee(formData) {
+  updateEmployee(id, formData) {
     return new Promise((resolve, reject) => {
       axios
-        .post(`${API_URL}/${selectedEmployee.value.id}?_method=PUT`, formData)
+        .post(`${API_URL}/${id}?_method=PUT`, formData)
         .then((res) => {
           resolve(res.data);
         })

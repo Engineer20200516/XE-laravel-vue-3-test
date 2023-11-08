@@ -33,8 +33,8 @@ class EmployeeController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'company_id' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'email' => '',
+            'phone' => '',
         ]);
 
         $employee = Employee::create($validatedData);
@@ -67,8 +67,8 @@ class EmployeeController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'company_id' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'email' => '',
+            'phone' => '',
         ]);
 
         $employee->update($validatedData);

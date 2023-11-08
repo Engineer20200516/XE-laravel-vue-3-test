@@ -9,21 +9,25 @@ const selectedCompany = ref(null);
 const page = ref(1);
 const pageCount = ref(0);
 const valid = ref(false);
+const loading = ref(false);
 
 watch(page, (newPage, oldPage) => {
   fetchCompanies(newPage);
 });
 
-const fetchCompanies = (newPage = page) => {
+const fetchCompanies = (newPage = page.value) => {
+  loading.value = true;
   companyService
     .getCompanies({ pageNumber: newPage })
     .then((data) => {
       companies.value = data.data;
       page.value = data.current_page;
       pageCount.value = Math.ceil(data.total / data.per_page);
+      loading.value = false;
     })
     .catch((err) => {
       console.error(err);
+      loading.value = false;
     });
 };
 
@@ -57,13 +61,16 @@ const saveEditedCompany = () => {
       }
       formData.append("website", selectedCompany.value.website);
 
+      loading.value = true;
       companyService
         .addCompany(formData)
         .then((res) => {
           fetchCompanies();
+          loading.value = false;
         })
         .catch((err) => {
           console.error(err);
+          loading.value = false;
         });
     } else {
       //When save edited company
@@ -76,13 +83,16 @@ const saveEditedCompany = () => {
       }
       formData.append("website", selectedCompany.value.website);
 
+      loading.value = true;
       companyService
         .updateCompany(selectedCompany.value.id, formData)
         .then((res) => {
           fetchCompanies();
+          loading.value = false;
         })
         .catch((err) => {
           console.error(err);
+          loading.value = false;
         });
     }
 
@@ -91,13 +101,17 @@ const saveEditedCompany = () => {
 };
 
 const removeCompany = (companyId) => {
+  loading.value = true;
+
   companyService
-    .removeCompany(selectedCompany.value.id)
+    .removeCompany(companyId)
     .then((res) => {
       fetchCompanies();
+      loading.value = false;
     })
     .catch((err) => {
       console.error(err);
+      loading.value = false;
     });
 };
 
@@ -209,6 +223,15 @@ const websiteRules = [];
         </v-card-actions>
       </v-form>
     </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="loading" width="auto" persistent>
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="purple"
+      indeterminate
+    ></v-progress-circular>
   </v-dialog>
 </template>
 
