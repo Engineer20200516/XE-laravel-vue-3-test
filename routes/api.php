@@ -31,6 +31,12 @@ Route::group(['prefix' => 'auth'], function () {
     );
 });
 
-Route::resource('companies', CompanyController::class);
-Route::resource('employees', EmployeeController::class);
-
+Route::group(
+    [
+        'middleware' => 'auth:sanctum'
+    ],
+    function () {
+        Route::resource('companies', CompanyController::class);
+        Route::resource('employees', EmployeeController::class);
+    }
+);

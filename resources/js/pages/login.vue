@@ -1,8 +1,9 @@
 <script setup>
-import router from "@/router";
 import AuthProvider from "@/views/pages/authentication/AuthProvider.vue";
 import logo from "@images/logo.svg?raw";
-import axios from "../axios-order";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const form = ref({
   email: "",
@@ -15,24 +16,13 @@ const errors = ref(null);
 const isPasswordVisible = ref(false);
 
 const login = ({ email, password }) => {
-  axios
-    .post("/auth/login", {
-      email: email,
-      password: password,
+  store
+    .dispatch("auth/login", { email, password })
+    .then((accessToken) => {
+      console.log("Login successful");
     })
-    .then((r) => {
-      const { accessToken } = r.data;
-
-      localStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-      // Redirect to `to` query if exist or redirect to index route
-      router.replace(router.query?.to ? String(router.query.to) : "/");
-
-      return null;
-    })
-    .catch((e) => {
-      console.log(e);
-      errors.value = e.response.data.message;
+    .catch((error) => {
+      console.log("Login failed:");
     });
 };
 </script>

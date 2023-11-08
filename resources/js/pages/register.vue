@@ -1,8 +1,9 @@
 <script setup>
-import router from "@/router";
 import AuthProvider from "@/views/pages/authentication/AuthProvider.vue";
 import logo from "@images/logo.svg?raw";
-import axios from "../axios-order";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const form = ref({
   username: "",
@@ -16,27 +17,12 @@ const errors = ref(null);
 const isPasswordVisible = ref(false);
 
 const register = ({ username, email, password }) => {
-  axios
-    .post("/auth/register", {
-      name: username,
-      email: email,
-      password: password,
-      c_password: password,
-    })
-    .then((r) => {
-      const { accessToken } = r.data;
-
-      localStorage.setItem("accessToken", JSON.stringify(accessToken));
-
-      // Redirect to `to` query if exist or redirect to index route
-      router.replace(router.query?.to ? String(router.query.to) : "/");
-
-      return null;
-    })
-    .catch((e) => {
-      console.log(e);
-      errors.value = e.response.data.message;
-    });
+  store.dispatch("auth/register", {
+    username,
+    email,
+    password,
+    c_password: password,
+  });
 };
 </script>
 
