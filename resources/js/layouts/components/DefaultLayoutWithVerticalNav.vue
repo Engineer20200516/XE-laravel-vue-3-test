@@ -6,7 +6,6 @@ import VerticalNavLink from "@layouts/components/VerticalNavLink.vue";
 import { useTheme } from "vuetify";
 
 // Components
-import Footer from "@/layouts/components/Footer.vue";
 import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
 import UserProfile from "@/layouts/components/UserProfile.vue";
 
@@ -21,10 +20,8 @@ const upgradeBanner = computed(() => {
 
 <template>
   <VerticalNavLayout>
-    <!-- 👉 navbar -->
     <template #navbar="{ toggleVerticalOverlayNavActive }">
       <div class="d-flex h-100 align-center">
-        <!-- 👉 Vertical nav toggle in overlay mode -->
         <IconBtn
           class="ms-n3 d-lg-none"
           @click="toggleVerticalOverlayNavActive(true)"
@@ -57,31 +54,7 @@ const upgradeBanner = computed(() => {
       />
     </template>
 
-    <template #after-vertical-nav-items>
-      <!-- 👉 illustration -->
-      <a
-        href="https://themeselection.com/item/sneat-vuetify-vuejs-laravel-admin-template"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="margin-left: 7px"
-      >
-        <img
-          :src="upgradeBanner"
-          alt="upgrade-banner"
-          transition="scale-transition"
-          class="upgrade-banner mx-auto"
-          style="max-width: 230px"
-        />
-      </a>
-    </template>
-
-    <!-- 👉 Pages -->
     <slot />
-
-    <!-- 👉 Footer -->
-    <template #footer>
-      <Footer />
-    </template>
   </VerticalNavLayout>
 </template>
 
